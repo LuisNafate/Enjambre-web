@@ -1,13 +1,10 @@
-// Importamos las funciones que necesitamos del módulo de Spotify
 import { getArtist, getAlbums, getTopTracks } from './spotify-api.js';
 
 const artistId = '1ZdhAl62G6ZlEKqIwUAfZR'; // ID Enjambre
-
 const currentPage = window.location.pathname.split("/").pop();
 
-// Este evento se dispara cuando el contenido del HTML ha sido cargado
 document.addEventListener('DOMContentLoaded', () => {
-  
+    
     if (currentPage === 'index.html' || currentPage === '') {
         loadHomePage();
     } else if (currentPage === 'albumes.html') {
@@ -17,18 +14,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Función para cargar la página de inicio
 const loadHomePage = async () => {
-    const artist = await getArtist(artistId);
-    const artistInfoDiv = document.getElementById('artist-info');
+    // Obtenemos los datos del artista y sus álbumes al mismo tiempo
+    const [artist, albums] = await Promise.all([
+        getArtist(artistId),
+        getAlbums(artistId)
+    ]);
 
-    // Creamos el HTML con los datos del artista
-    artistInfoDiv.innerHTML = `
-        <h1>${artist.name}</h1>
-        <img src="${artist.images[0].url}" alt="${artist.name}" width="300">
-        <p><strong>Géneros:</strong> ${artist.genres.join(', ')}</p>
-        <p><strong>Popularidad:</strong> ${artist.popularity} / 100</p>
-        <p><strong>Seguidores en Spotify:</strong> ${artist.followers.total.toLocaleString()}</p>
+    // 1. Rellenar el Hero y la sección "About"
+    document.getElementById('artist-name-hero').textContent = artist.name;
+    document.getElementById('artist-name-about').textContent = artist.name;
+    // 2. Rellenar las estadísticas
+    document.getElementById('artist-followers').textContent = artist.followers.total.toLocaleString();
+    document.getElementById('artist-popularity').textContent = `${artist.popularity} / 100`;
+    document.getElementById('artist-genres').textContent = artist.genres.slice(0, 3).join(', ');
+    // 3. Rellenar la tarjeta del último lanzamiento
+    const latestAlbum = albums[0]; 
+    const latestAlbumCard = document.getElementById('latest-album-card');
+    latestAlbumCard.innerHTML = `
+        <img src="${latestAlbum.images[1].url}" alt="${latestAlbum.name}">
+        <h3>${latestAlbum.name}</h3>
+        <p>Lanzamiento: ${latestAlbum.release_date}</p>
+        <p>${latestAlbum.total_tracks} canciones</p>
     `;
 };
 
