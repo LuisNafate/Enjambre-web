@@ -31,3 +31,41 @@ const loadHomePage = async () => {
         <p><strong>Seguidores en Spotify:</strong> ${artist.followers.total.toLocaleString()}</p>
     `;
 };
+
+// Función para cargar la página de álbumes
+const loadAlbumsPage = async () => {
+    const albums = await getAlbums(artistId);
+    const albumsListDiv = document.getElementById('albums-list');
+
+    // Por cada álbum, creamos una tarjeta y la añadimos a la lista
+    albums.forEach(album => {
+        const albumCard = document.createElement('div');
+        albumCard.className = 'card';
+        albumCard.innerHTML = `
+            <img src="${album.images[1].url}" alt="${album.name}">
+            <h3>${album.name}</h3>
+            <p>Lanzamiento: ${album.release_date}</p>
+            <p>${album.total_tracks} canciones</p>
+        `;
+        albumsListDiv.appendChild(albumCard);
+    });
+};
+
+// Función para cargar la página de top canciones
+const loadTopTracksPage = async () => {
+    const tracks = await getTopTracks(artistId);
+    const tracksListOl = document.getElementById('tracks-list');
+    
+    // Por cada canción, creamos un elemento de lista y lo añadimos
+    tracks.forEach((track, index) => {
+        const trackItem = document.createElement('li');
+        trackItem.innerHTML = `
+            <strong>${index + 1}. ${track.name}</strong> (Álbum: ${track.album.name})
+            <br>
+            <audio controls src="${track.preview_url}">
+                Tu navegador no soporta el elemento de audio.
+            </audio>
+        `;
+        tracksListOl.appendChild(trackItem);
+    });
+};
