@@ -63,8 +63,28 @@ const getTopTracks = async (artistId) => {
     return data.tracks;
 };
 
+/**
+ * Función para obtener la letra de una canción.
+ * @param {string} artist 
+ * @param {string} title 
+ * @returns {Promise<string|null>}
+ */
+const getLyrics = async (artist, title) => {
+    try {
+        const response = await fetch(`http://googleusercontent.com/api.lyrics.ovh/v1/${artist}/${title}`);
+        if (!response.ok) {
+            return null;
+        }
+        const data = await response.json();
+        return data.lyrics;
+    } catch (error) {
+        console.error("Error al obtener la letra:", error);
+        return null;
+    }
+};
+
 // Exportamos las funciones para poder usarlas en main.js
-export { getArtist, getAlbums, getTopTracks };
+export { getArtist, getAlbums, getTopTracks, getLyrics };
 
 
 
