@@ -1,9 +1,11 @@
+// js/quiz.js
 import { getTopTracks } from './spotify-api.js';
 import { getLyrics } from './lyrics-api.js';
 
+// **IMPORTANTE**: Usa el mismo ID de artista que en main.js
+const artistId = '1ZdhAl62G6ZlEKqIwUAfZR'; // Ejemplo: Daft Punk
 
-const artistId = '1ZdhAl62G6ZlEKqIwUAfZR';
-
+// Elementos del DOM
 const startScreen = document.getElementById('start-screen');
 const questionScreen = document.getElementById('question-screen');
 const resultsScreen = document.getElementById('results-screen');
@@ -19,6 +21,7 @@ let topTracks = [];
 let currentQuestionIndex = 0;
 let score = 0;
 
+// Event Listeners
 startBtn.addEventListener('click', startQuiz);
 restartBtn.addEventListener('click', () => {
     resultsScreen.classList.add('hidden');
@@ -36,11 +39,13 @@ async function startQuiz() {
     resultsScreen.classList.add('hidden');
     questionScreen.classList.remove('hidden');
     
+    // Muestra un mensaje de carga mientras se obtienen las canciones
     lyricSnippetEl.innerHTML = '<p>Cargando canciones y letras...</p>';
     answerButtonsEl.innerHTML = '';
 
+    // Obtiene las canciones de Spotify y las mezcla
     topTracks = await getTopTracks(artistId);
-    topTracks.sort(() => Math.random() - 0.5);
+    topTracks.sort(() => Math.random() - 0.5); // Mezcla las canciones
 
     displayNextQuestion();
 }
@@ -53,11 +58,12 @@ async function displayNextQuestion() {
     }
 
     feedbackEl.textContent = '';
-    answerButtonsEl.innerHTML = ''; 
+    answerButtonsEl.innerHTML = ''; // Limpia los botones anteriores
 
     const track = topTracks[currentQuestionIndex];
     const lyrics = await getLyrics(track.artists[0].name, track.name);
 
+    // Si no se encuentran letras, salta a la siguiente canción
     if (!lyrics) {
         console.warn(`Letra no encontrada para "${track.name}", saltando pregunta.`);
         currentQuestionIndex++;
@@ -74,13 +80,14 @@ async function displayNextQuestion() {
             options.push(randomTrack.name);
         }
     }
-    options.sort(() => Math.random() - 0.5); 
+    options.sort(() => Math.random() - 0.5); // Mezcla las opciones
 
     // Muestra el fragmento de la letra
     const lyricLines = lyrics.split('\n').filter(line => line.trim() !== '');
     const snippet = lyricLines.slice(0, 4).join('<br>');
     lyricSnippetEl.innerHTML = `<p>"${snippet}..."</p>`;
 
+    // Crea y muestra los botones de respuesta
     options.forEach(option => {
         const button = document.createElement('button');
         button.innerText = option;
@@ -101,6 +108,7 @@ function selectAnswer(selectedOption, correctAnswer) {
         feedbackEl.style.color = '#ff4d4d';
     }
 
+    // Deshabilita los botones y pasa a la siguiente pregunta después de un momento
     Array.from(answerButtonsEl.children).forEach(button => button.disabled = true);
     currentQuestionIndex++;
     setTimeout(displayNextQuestion, 2000);
