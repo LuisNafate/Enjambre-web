@@ -1,8 +1,8 @@
 
 /**
  * Función para obtener la letra de una canción.
- * @param {string} artist - El nombre del artista.
- * @param {string} title - El título de la canción.
+ * @param {string} artist
+ * @param {string} title
  * @returns {Promise<string|null>} - La letra de la canción o null si no se encuentra.
  */
 const getLyrics = async (artist, title) => {

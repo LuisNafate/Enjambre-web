@@ -1,9 +1,8 @@
-// js/quiz.js
+
 import { getTopTracks } from './spotify-api.js';
 import { getLyrics } from './lyrics-api.js';
 
-// **IMPORTANTE**: Usa el mismo ID de artista que en main.js
-const artistId = '1ZdhAl62G6ZlEKqIwUAfZR'; // Ejemplo: Daft Punk
+const artistId = '1ZdhAl62G6ZlEKqIwUAfZR'; // ID Enjambre
 
 // Elementos del DOM
 const startScreen = document.getElementById('start-screen');
@@ -30,7 +29,6 @@ restartBtn.addEventListener('click', () => {
 
 // Inicia el juego
 async function startQuiz() {
-    // Resetea el estado
     score = 0;
     currentQuestionIndex = 0;
     feedbackEl.textContent = '';
@@ -39,13 +37,12 @@ async function startQuiz() {
     resultsScreen.classList.add('hidden');
     questionScreen.classList.remove('hidden');
     
-    // Muestra un mensaje de carga mientras se obtienen las canciones
     lyricSnippetEl.innerHTML = '<p>Cargando canciones y letras...</p>';
     answerButtonsEl.innerHTML = '';
 
     // Obtiene las canciones de Spotify y las mezcla
     topTracks = await getTopTracks(artistId);
-    topTracks.sort(() => Math.random() - 0.5); // Mezcla las canciones
+    topTracks.sort(() => Math.random() - 0.5);
 
     displayNextQuestion();
 }
@@ -74,7 +71,7 @@ async function displayNextQuestion() {
     // Prepara las opciones de respuesta
     const correctAnswer = track.name;
     const options = [correctAnswer];
-    while (options.length < 3) {
+    while (options.length < 4) {
         const randomTrack = topTracks[Math.floor(Math.random() * topTracks.length)];
         if (!options.includes(randomTrack.name)) {
             options.push(randomTrack.name);
@@ -82,12 +79,12 @@ async function displayNextQuestion() {
     }
     options.sort(() => Math.random() - 0.5); // Mezcla las opciones
 
-    // Muestra el fragmento de la letra
+    // fragmento de letra
     const lyricLines = lyrics.split('\n').filter(line => line.trim() !== '');
     const snippet = lyricLines.slice(0, 4).join('<br>');
     lyricSnippetEl.innerHTML = `<p>"${snippet}..."</p>`;
 
-    // Crea y muestra los botones de respuesta
+    // botones
     options.forEach(option => {
         const button = document.createElement('button');
         button.innerText = option;
@@ -108,13 +105,12 @@ function selectAnswer(selectedOption, correctAnswer) {
         feedbackEl.style.color = '#ff4d4d';
     }
 
-    // Deshabilita los botones y pasa a la siguiente pregunta después de un momento
     Array.from(answerButtonsEl.children).forEach(button => button.disabled = true);
     currentQuestionIndex++;
     setTimeout(displayNextQuestion, 2000);
 }
 
-// Muestra la pantalla de resultados finales
+// muestra los resultados
 function showResults() {
     questionScreen.classList.add('hidden');
     resultsScreen.classList.remove('hidden');
