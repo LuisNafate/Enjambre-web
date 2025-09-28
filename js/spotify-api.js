@@ -83,8 +83,25 @@ const getLyrics = async (artist, title) => {
     }
 };
 
+/**
+ * Función para obtener las canciones de un álbum específico.
+ * @param {string} albumId
+ * @returns {Promise<Array>} - Un array con las canciones del album que me echo paro la documentacion y chat.
+ */
+const getAlbumTracks = async (albumId) => {
+    const token = await _getToken();
+    const result = await fetch(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token }
+    });
+
+    const data = await result.json();
+    const tracks = data.items.map(track => ({ ...track, album: { name: "Album Name Placeholder" } }));
+    return tracks;
+};
+
 // Exportamos las funciones para poder usarlas en main.js
-export { getArtist, getAlbums, getTopTracks, getLyrics };
+export { getArtist, getAlbums, getTopTracks, getLyrics, getAlbumTracks };
 
 
 
