@@ -27,8 +27,15 @@ restartBtn.addEventListener('click', () => {
     startQuiz(); // Reinicia el juego
 });
 
-// Inicia el juego
 async function startQuiz() {
+    // nombres exactos que no agarra
+    const albumesIncluidos = [
+        "Próximos Prójimos",
+        "Imperfecto Extraño",
+        "Daltónico"
+        // aqui agrego los albumes pq le da ansiedad a la api si pongo todos
+    ];
+
     // Resetea el estado del juego
     score = 0;
     currentQuestionIndex = 0;
@@ -38,30 +45,34 @@ async function startQuiz() {
     resultsScreen.classList.add('hidden');
     questionScreen.classList.remove('hidden');
     
-    lyricSnippetEl.innerHTML = '<p>Buscando álbumes y canciones para el quiz...</p>';
+    lyricSnippetEl.innerHTML = '<p>Buscando canciones en tus álbumes seleccionados...</p>';
     answerButtonsEl.innerHTML = '';
 
 
-    // 1. Obtenemos todos los albumes del artista.
-    const albums = await getAlbums(artistId);
+    // Obtenemos todos los álbumes del artista.
+    const todosLosAlbumes = await getAlbums(artistId);
 
-    // 2. Seleccionamos hasta 5 albumes al azar para variar el quiz cada vez.
-    const shuffledAlbums = albums.sort(() => 0.5 - Math.random());
-    const selectedAlbums = shuffledAlbums.slice(0, 5);
+    // Filtramos para quedarnos solo con los que están en nuestra lista 'albumesIncluidos'.
+    const albumesSeleccionados = todosLosAlbumes.filter(album => 
+        albumesIncluidos.includes(album.name)
+    );
 
-    // 3. Obtenemos las canciones de esos albumes seleccionados.
-    // Usamos Promise.all para hacer todas las peticiones en paralelo y que sea más rápido.
-    const trackPromises = selectedAlbums.map(album => getAlbumTracks(album.id));
+    if (albumesSeleccionados.length === 0) {
+        lyricSnippetEl.innerHTML = '<p>No se encontró ninguno de tus álbumes seleccionados en Spotify. Revisa los nombres.</p>';
+        return;
+    }
+
+    // === 3. CONSTRUIR LA LISTA DE CANCIONES ===
+
+    // Obtenemos las canciones de esos álbumes.
+    const trackPromises = albumesSeleccionados.map(album => getAlbumTracks(album.id));
     const albumTracksArrays = await Promise.all(trackPromises);
 
-    // El '.flat()' convierte un array de arrays en un solo array.
-    topTracks = albumTracksArrays.flat();
-
-    // 5. Mezclamos la lista final de canciones.
-    topTracks.sort(() => Math.random() - 0.5);
+    // Juntamos todas las canciones en un solo gran array y lo mezclamos.
+    topTracks = albumTracksArrays.flat().sort(() => Math.random() - 0.5);
 
     if (topTracks.length < 3) {
-        lyricSnippetEl.innerHTML = '<p>No se encontraron suficientes canciones para el quiz. Inténtalo con otro artista.</p>';
+        lyricSnippetEl.innerHTML = '<p>No se encontraron suficientes canciones en los álbumes seleccionados.</p>';
         return;
     }
 
