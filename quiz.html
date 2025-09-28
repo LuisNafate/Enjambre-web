@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Letras - Mi Artista Favorito</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="http://googleusercontent.com/fonts.googleapis.com/0">
+    <link rel="preconnect" href="http://googleusercontent.com/fonts.gstatic.com/0" crossorigin>
+    <link href="http://googleusercontent.com/fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="albumes.html">Álbumes</a>
+            <a href="top-canciones.html">Top Canciones</a>
+            <a href="quiz.html" class="active">Quiz</a>
+        </nav>
+    </header>
+    
+    <main>
+        <h1>Adivina la Canción</h1>
+        <div id="quiz-container">
+            <div id="start-screen">
+                <p>Pon a prueba tus conocimientos sobre las letras de las canciones.</p>
+                <button id="start-btn" class="quiz-btn">Comenzar</button>
+            </div>
+
+            <div id="question-screen" class="hidden">
+                <div id="lyric-snippet" class="lyric-box">
+                    <p>"..."</p>
+                </div>
+                <div id="answer-buttons" class="btn-grid">
+                    </div>
+                <div id="feedback"></div>
+            </div>
+
+            <div id="results-screen" class="hidden">
+                <h2>¡Juego Terminado!</h2>
+                <p>Tu puntuación final es:</p>
+                <p id="score-text">0 / 10</p>
+                <button id="restart-btn" class="quiz-btn">Jugar de Nuevo</button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/quiz.js"></script>
+</body>
+</html>
