@@ -58,21 +58,40 @@ const loadAlbumsPage = async () => {
     });
 };
 
+const formatDuration = (ms) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = ((ms % 60000) / 1000).toFixed(0);
+    return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
+};
+
 // Función para cargar la página de top canciones
 const loadTopTracksPage = async () => {
     const tracks = await getTopTracks(artistId);
-    const tracksListOl = document.getElementById('tracks-list');
+    const tracksContainer = document.getElementById('tracks-container');
     
-    // Por cada canción, creamos un elemento de lista y lo añadimos
+    // Limpiamos el mensaje de "Cargando..."
+    tracksContainer.innerHTML = ''; 
+
     tracks.forEach((track, index) => {
-        const trackItem = document.createElement('li');
-        trackItem.innerHTML = `
-            <strong>${index + 1}. ${track.name}</strong> (Álbum: ${track.album.name})
-            <br>
-            <audio controls src="${track.preview_url}">
-                Tu navegador no soporta el elemento de audio.
-            </audio>
+        const trackCard = document.createElement('div');
+        trackCard.className = 'track-card';
+
+        trackCard.innerHTML = `
+            <div class="track-rank">${index + 1}</div>
+            <img class="track-album-art" src="${track.album.images[2].url}" alt="Portada de ${track.album.name}">
+            <div class="track-info">
+                <h3>${track.name}</h3>
+                <p>${track.album.name} • ${formatDuration(track.duration_ms)}</p>
+            </div>
+            <div class="track-player-link">
+                ${track.preview_url ? `<audio controls src="${track.preview_url}"></audio>` : '<p>Preview no disponible</p>'}
+                <a href="${track.external_urls.spotify}" target="_blank" class="spotify-link">
+                    Escuchar en Spotify
+                </a>
+            </div>
         `;
-        tracksListOl.appendChild(trackItem);
+
+        // Añadimos la tarjeta al contenedor
+        tracksContainer.appendChild(trackCard);
     });
 };

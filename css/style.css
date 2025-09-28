@@ -204,3 +204,84 @@ h1, h2, h3 {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
 }
+
+/* ===== TOP TRACKS PAGE STYLES ===== */
+#tracks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre cada tarjeta de canción */
+}
+
+.track-card {
+    display: flex;
+    align-items: center;
+    background-color: var(--medium-grey);
+    padding: 15px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.track-card:hover {
+    background-color: var(--light-grey);
+}
+
+.track-rank {
+    font-size: 2rem;
+    font-family: var(--font-headings);
+    color: var(--spotify-green);
+    margin-right: 20px;
+    min-width: 30px; /* Ancho mínimo para alinear los números */
+    text-align: center;
+}
+
+.track-album-art {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+.track-info {
+    flex-grow: 1; /* Ocupa el espacio disponible */
+}
+
+.track-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    font-family: var(--font-body);
+    letter-spacing: normal;
+}
+
+.track-info p {
+    margin: 0;
+    color: #b3b3b3; /* Un gris más claro para la info secundaria */
+}
+
+.track-player-link {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 250px;
+}
+
+.track-player-link audio {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.spotify-link {
+    display: inline-block;
+    background-color: var(--spotify-green);
+    color: var(--text-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: transform 0.2s ease;
+}
+
+.spotify-link:hover {
+    transform: scale(1.05);
+}
