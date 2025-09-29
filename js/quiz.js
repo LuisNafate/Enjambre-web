@@ -28,9 +28,18 @@ restartBtn.addEventListener('click', () => {
 });
 
 async function startQuiz() {
-
-    // 1. Define cuántas preguntas quieres en tu quiz.
-    const numeroDePreguntas = 10; 
+    // nombres exactos que no agarra
+    const albumesIncluidos = [
+        "Próximos Prójimos",
+        "Imperfecto Extraño",
+        "Daltónico",
+        "Consuelo en Domingo",
+        "Noches de salon",
+        "Enjambre y los huespedes del orbe",
+        "El segundo es felino",
+        
+        // aqui agrego los albumes pq le da ansiedad a la api si pongo todos
+    ];
 
     // Resetea el estado del juego
     score = 0;
@@ -41,34 +50,37 @@ async function startQuiz() {
     resultsScreen.classList.add('hidden');
     questionScreen.classList.remove('hidden');
     
-    lyricSnippetEl.innerHTML = '<p>Buscando canciones con letra para el quiz...</p>';
+    lyricSnippetEl.innerHTML = '<p>Buscando canciones de los albumes seleccionados...</p>';
     answerButtonsEl.innerHTML = '';
 
-    // 2. Obtenemos TODAS las canciones de los álbumes que definiste.
-    const albumesIncluidos = ["Próximos Prójimos", "Imperfecto Extraño", "Daltónico, Enjambre y los huespedes del orbe","El segundo es felino"];
+
+    // Obtenemos todos los álbumes del artista.
     const todosLosAlbumes = await getAlbums(artistId);
-    const albumesSeleccionados = todosLosAlbumes.filter(album => albumesIncluidos.includes(album.name));
-    
+
+    // Filtramos para quedarnos solo con los que están en nuestra lista 'albumesIncluidos'.
+    const albumesSeleccionados = todosLosAlbumes.filter(album => 
+        albumesIncluidos.includes(album.name)
+    );
+
     if (albumesSeleccionados.length === 0) {
-        lyricSnippetEl.innerHTML = '<p>No se encontró ninguno de tus álbumes seleccionados.</p>';
+        lyricSnippetEl.innerHTML = '<p>No se encontró ninguno de tus álbumes seleccionados en Spotify. Revisa los nombres.</p>';
         return;
     }
 
+    // === 3. CONSTRUIR LA LISTA DE CANCIONES ===
+
+    // Obtenemos las canciones de esos álbumes.
     const trackPromises = albumesSeleccionados.map(album => getAlbumTracks(album.id));
-    const todasLasCanciones = (await Promise.all(trackPromises)).flat();
+    const albumTracksArrays = await Promise.all(trackPromises);
 
-    // 3. Filtramos esa lista para quedarnos SOLO con las canciones que existen en nuestra base de datos local.
-    const cancionesConLetra = todasLasCanciones.filter(track => letrasDB[track.name]);
+    // Juntamos todas las canciones en un solo gran array y lo mezclamos.
+    topTracks = albumTracksArrays.flat().sort(() => Math.random() - 0.5);
 
-    // 4. Mezclamos la lista de canciones válidas y tomamos la cantidad que definimos.
-    cancionesConLetra.sort(() => Math.random() - 0.5);
-    topTracks = cancionesConLetra.slice(0, numeroDePreguntas); // 'topTracks' ahora solo tiene preguntas válidas.
-
-    // Verificamos si tenemos suficientes canciones para empezar el quiz.
     if (topTracks.length < 3) {
-        lyricSnippetEl.innerHTML = `<p>Solo se encontraron ${topTracks.length} canciones con letra. Se necesitan al menos 3 para jugar.</p>`;
+        lyricSnippetEl.innerHTML = '<p>No se encontraron suficientes canciones en los álbumes seleccionados.</p>';
         return;
     }
+
     displayNextQuestion();
 }
 
@@ -80,7 +92,7 @@ async function displayNextQuestion() {
     }
 
     feedbackEl.textContent = '';
-    answerButtonsEl.innerHTML = ''; 
+    answerButtonsEl.innerHTML = ''; // Limpia los botones anteriores
 
     const track = topTracks[currentQuestionIndex];
     const lyrics = await getLyrics(track.artists[0].name, track.name);
