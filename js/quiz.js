@@ -32,7 +32,11 @@ async function startQuiz() {
     const albumesIncluidos = [
         "Próximos Prójimos",
         "Imperfecto Extraño",
-        "Daltónico"
+        "Daltónico",
+        "Consuelo en Domingo",
+        "Noches de salon",
+        "Enjambre y los huespedes del orbe",
+        
         // aqui agrego los albumes pq le da ansiedad a la api si pongo todos
     ];
 
@@ -45,7 +49,7 @@ async function startQuiz() {
     resultsScreen.classList.add('hidden');
     questionScreen.classList.remove('hidden');
     
-    lyricSnippetEl.innerHTML = '<p>Buscando canciones en tus álbumes seleccionados...</p>';
+    lyricSnippetEl.innerHTML = '<p>Buscando canciones de los albumes seleccionados...</p>';
     answerButtonsEl.innerHTML = '';
 
 
@@ -130,10 +134,10 @@ async function displayNextQuestion() {
 function selectAnswer(selectedOption, correctAnswer) {
     if (selectedOption === correctAnswer) {
         score++;
-        feedbackEl.textContent = '¡Correcto! ✅';
+        feedbackEl.textContent = '¡Correcto!';
         feedbackEl.style.color = 'var(--spotify-green)';
     } else {
-        feedbackEl.textContent = `Incorrecto. La respuesta era "${correctAnswer}" ❌`;
+        feedbackEl.textContent = `Incorrecto. La respuesta era "${correctAnswer}"`;
         feedbackEl.style.color = '#ff4d4d';
     }
 
