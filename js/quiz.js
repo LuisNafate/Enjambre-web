@@ -36,6 +36,7 @@ async function startQuiz() {
         "Consuelo en Domingo",
         "Noches de salon",
         "Enjambre y los huespedes del orbe",
+        "El segundo es felino",
         
         // aqui agrego los albumes pq le da ansiedad a la api si pongo todos
     ];
